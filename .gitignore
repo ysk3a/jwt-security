@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### only here for demo/learning purposes ###
-/bruno-restclient
+# /bruno-restclient

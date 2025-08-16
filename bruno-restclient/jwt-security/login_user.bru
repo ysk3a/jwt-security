@@ -1,0 +1,27 @@
+meta {
+  name: login_user
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8080/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "hara",
+    "password": "1234"
+  }
+}
+
+tests {
+  bru.setVar("accessToken", res.body.accessToken);
+  bru.setVar("refreshToken", res.body.refreshToken);
+}
+
+settings {
+  encodeUrl: true
+}
