@@ -1,5 +1,6 @@
-package com.example.jwt_security.model;
+package com.example.jwt_security.entity;
 
+import com.example.jwt_security.model.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

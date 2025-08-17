@@ -1,11 +1,11 @@
 package com.example.jwt_security.service;
 
 import com.example.jwt_security.dto.TokenPair;
+import com.example.jwt_security.entity.User;
 import com.example.jwt_security.repository.TokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,12 +53,27 @@ public class JwtService {
         return generateToken(authentication, refreshExpirationMs, claims);
     }
 
+//    public String generateAccessTokenWithoutAuth(User user) {
+//        return generateTokenWithoutAuth(user, jwtExpirationMs);
+//    }
+//
+//    public String generateRefreshTokenWithoutAuth(User user) {
+//        return generateTokenWithoutAuth(user, refreshExpirationMs );
+//    }
+//    private String generateTokenWithoutAuth(User user, long expireTime) {
+//        return Jwts
+//                .builder()
+//                .subject(user.getUsername())
+//                .issuedAt(new Date(System.currentTimeMillis()))
+//                .expiration(new Date(System.currentTimeMillis() + expireTime ))
+//                .signWith(getSignInKey())
+//                .compact();
+//    }
+
     private String generateToken(Authentication authentication, long expirationInMs, Map<String, String> claims) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-
         Date now = new Date(); // Time of token creation
         Date expiryDate = new Date(now.getTime() + expirationInMs); // Time of token expiration
-
         return Jwts.builder()
                 .header()
                 .add("typ", "JWT")
@@ -119,7 +134,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        Claims claims = null;
+        Claims claims;
         try {
             claims = Jwts.parser()
                     .verifyWith(getSignInKey())

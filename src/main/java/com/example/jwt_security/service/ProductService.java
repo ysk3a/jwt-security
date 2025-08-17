@@ -1,7 +1,7 @@
 package com.example.jwt_security.service;
 
 
-import com.example.jwt_security.model.Product;
+import com.example.jwt_security.entity.Product;
 import com.example.jwt_security.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

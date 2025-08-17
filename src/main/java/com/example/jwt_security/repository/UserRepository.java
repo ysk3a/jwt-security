@@ -1,6 +1,6 @@
 package com.example.jwt_security.repository;
 
-import com.example.jwt_security.model.User;
+import com.example.jwt_security.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

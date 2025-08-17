@@ -6,8 +6,12 @@ meta {
 
 post {
   url: http://localhost:8080/api/auth/refresh-token
-  body: json
-  auth: none
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{refreshToken}}
 }
 
 body:json {

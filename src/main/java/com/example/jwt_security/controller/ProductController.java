@@ -1,7 +1,7 @@
 package com.example.jwt_security.controller;
 
 
-import com.example.jwt_security.model.Product;
+import com.example.jwt_security.entity.Product;
 import com.example.jwt_security.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-# jwt logout
+# jwt logout & Implementing Secure Refresh Tokens in Spring Boot
 - `youtube.com/watch?v=OpSU0VgfkL4&t`
 - OneToMany and custom sql
   - notice in User class we have a column `@OneToMany(mappedBy = "user_obj") private List<Token> tokens;`
@@ -8,18 +8,30 @@
 - Changes follow `github.com/hello-iftekhar/springJwt` and try to 'merge' or 'incorporate' to this code base.
   - Key files is JwtService, AuthService and SecurityConfig files
     - these files contain the changes regarding handling tokens on logout and invalidating previous accessToken
-
+- The tutorial GitHub is different and simplified for the corresponding video and this project attempts to 'merge' that tutorial here.
+- Should look into error handling:
+  - `stackoverflow.com/questions/38117717/what-is-the-best-way-to-return-different-types-of-responseentity-in-spring-boot`
+- Testing using bruno (WIP):
+    - register user
+    - login user. it should use variables to set accessToken and refreshToken
+    - get product
+    - wait for accessToken to expire
+    - get product again. should fail with...
+    - refresh token
+    - get product
 
 ***
 Questions:
 - not sure what this is for in SecurityConfig: `.userDetailsService(customUserDetailsService)`
 - SecurityConfig order of dot notation matter?
 - Previous Repo errors when logging in with same credentials while this repo adds to db?
+- I am not sure what makes a secure refresh token secure
+- is it normal to pass password in request body in plain text?
 
 ***
 #  Secure your REST API with JWT: (Auth + Roles + Refresh) in Spring Security
 - `youtube.com/watch?v=clMI_jhQcR4`
-- Prerequ:
+- Prerequisite:
   - note the application.properties having the properties for postgres. we also need to have the database called jwt-security
     - if jwt-security database does not exist, open psql or whatever sql client to execute `create database jwt-security;` then you can run this spring boot app
       - you can then view the generated tables(entities) in pgAdmin gui Servers>PostgresSQL 15>Databases>jwt-security>schemas>public>tables to view the tables
@@ -48,7 +60,7 @@ This project demonstrates a secure REST API built with Spring Boot, utilizing JS
 * **JWT-Based Authentication:** Secures API endpoints using JWTs.
 * **Role-Based Authorization:**  Supports different user roles (though not explicitly demonstrated in the provided code).
 * **Product Management:** Basic CRUD operations for products (create, read, update, delete).
-* **PostgreSQL Database:** Stores user and product data in a PostgreSQL database.
+* **PostgresSQL Database:** Stores user and product data in a PostgresSQL database.
 * **Validation:** Implements input validation for request payloads.
 
 ## Technologies
@@ -56,7 +68,7 @@ This project demonstrates a secure REST API built with Spring Boot, utilizing JS
 * **Spring Boot:** The core framework for building the application.
 * **Spring Security:** Handles authentication and authorization.
 * **Spring Data JPA:** Simplifies database interactions.
-* **PostgreSQL:** The relational database management system.
+* **PostgresSQL:** The relational database management system.
 * **JSON Web Tokens (JWT):** Used for secure authentication.
 * **io.jsonwebtoken (JJWT):** A library for creating and parsing JWTs.
 * **Lombok:** Reduces boilerplate code.
@@ -68,11 +80,11 @@ This project demonstrates a secure REST API built with Spring Boot, utilizing JS
 1. **Prerequisites:**
    * Java Development Kit (JDK) 17 or higher
    * Maven
-   * PostgreSQL database installed and running.
+   * PostgresSQL database installed and running.
 
 2. **Database Configuration:**
    * Open `src/main/resources/application.properties`.
-   * Update the PostgreSQL connection details (`spring.datasource.url`, `spring.datasource.username`, `spring.datasource.password`) to match your database setup.
+   * Update the PostgresSQL connection details (`spring.datasource.url`, `spring.datasource.username`, `spring.datasource.password`) to match your database setup.
      ```properties
      spring.datasource.url=jdbc:postgresql://localhost:5432/<DATABASE-NAME>
      spring.datasource.username=<USERNAME>
@@ -121,7 +133,7 @@ This project demonstrates a secure REST API built with Spring Boot, utilizing JS
 * **Role based authorization**
 * **Validation for all entities**
 * **Product update**
-
+* Error Handling: `stackoverflow.com/questions/38117717/what-is-the-best-way-to-return-different-types-of-responseentity-in-spring-boot`
 
 ***
 Question:

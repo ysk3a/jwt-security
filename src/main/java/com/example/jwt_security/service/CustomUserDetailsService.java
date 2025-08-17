@@ -1,7 +1,7 @@
 package com.example.jwt_security.service;
 
 
-import com.example.jwt_security.model.User;
+import com.example.jwt_security.entity.User;
 import com.example.jwt_security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                 getAuthority(user)
         );
     }
+    /*
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return repository.findByUsername(username)
+                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+    }
+     */
 
     private Collection<? extends GrantedAuthority> getAuthority(User user) {
         GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().name());

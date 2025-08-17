@@ -1,6 +1,6 @@
 package com.example.jwt_security.config;
 
-import com.example.jwt_security.model.Token;
+import com.example.jwt_security.entity.Token;
 import com.example.jwt_security.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
