@@ -1,0 +1,22 @@
+meta {
+  name: login_user_manual_token
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8080/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "hara",
+    "password": "1234"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

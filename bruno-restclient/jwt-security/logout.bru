@@ -1,0 +1,20 @@
+meta {
+  name: logout
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:8080/logout
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  bru.setVar("accessToken", null);
+  bru.setVar("refreshToken", null);
+}
+
+settings {
+  encodeUrl: true
+}

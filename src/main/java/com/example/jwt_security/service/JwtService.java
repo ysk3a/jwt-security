@@ -1,11 +1,13 @@
 package com.example.jwt_security.service;
 
 import com.example.jwt_security.dto.TokenPair;
+import com.example.jwt_security.repository.TokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +17,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -28,6 +31,9 @@ public class JwtService {
 
     @Value("${app.jwt.refresh-expiration}")
     private long refreshExpirationMs;
+
+    @Autowired
+    private TokenRepository tokenRepository;
 
     public TokenPair generateTokenPair(Authentication authentication) {
         String accessToken = generateAccessToken(authentication);
@@ -68,8 +74,27 @@ public class JwtService {
     // Validate token
     public boolean validateTokenForUser(String token, UserDetails userDetails) {
         final String username = extractUsernameFromToken(token);
-        return username != null
-                && username.equals(userDetails.getUsername());
+        boolean validToken = tokenRepository
+                .findByAccessToken(token)
+                .map(t -> !t.isLoggedOut())
+                .orElse(false);
+
+        return ( username != null
+                && username.equals(userDetails.getUsername())) && !isTokenExpired(token) && validToken;
+
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> resolver) {
+        Claims claims = extractAllClaims(token);
+        return resolver.apply(claims);
     }
 
     public boolean isValidToken(String token) {

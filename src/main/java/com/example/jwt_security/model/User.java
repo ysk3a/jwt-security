@@ -1,12 +1,16 @@
 package com.example.jwt_security.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "application_user")
-public class User {
+public class User implements UserDetails {
     // note that 'user' is a keyword so user cannot be the table name!
 
     @Id
@@ -41,10 +45,38 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "user_obj")
+    private List<Token> tokens;
+
     public User(String fullName, String username, String password, Role role) {
         this.fullName = fullName;
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 }

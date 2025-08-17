@@ -1,0 +1,19 @@
+meta {
+  name: get_products_with_manual_token
+  type: http
+  seq: 8
+}
+
+get {
+  url: http://localhost:8080/api/products
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoYXJhIiwiaWF0IjoxNzU1Mzg5MTg2LCJleHAiOjE3NTUzODkyNDZ9.scRhaI0JR4Mo28aP5i0JEwo0NgOPm8c_05tNdw5vZYg
+}
+
+settings {
+  encodeUrl: true
+}

@@ -5,11 +5,14 @@ import com.example.jwt_security.dto.LoginRequest;
 import com.example.jwt_security.dto.RefreshTokenRequest;
 import com.example.jwt_security.dto.RegisterRequest;
 import com.example.jwt_security.dto.TokenPair;
+import com.example.jwt_security.model.Token;
 import com.example.jwt_security.model.User;
+import com.example.jwt_security.repository.TokenRepository;
 import com.example.jwt_security.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,15 +22,24 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private TokenRepository tokenRepository;
 
     @Transactional
     public void registerUser(RegisterRequest registerRequest) {
@@ -61,7 +73,13 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Generate Token Pair
-        return jwtService.generateTokenPair(authentication);
+        TokenPair tokenPair = jwtService.generateTokenPair(authentication);
+
+        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow();
+        revokeAllTokenByUser(user);
+        saveUserToken(tokenPair.getAccessToken(), tokenPair.getRefreshToken(), user);
+
+        return tokenPair;
     }
 
     public TokenPair refreshToken(@Valid RefreshTokenRequest request) {
@@ -89,4 +107,26 @@ public class AuthService {
         String accessToken = jwtService.generateAccessToken(authentication);
         return new TokenPair(accessToken, refreshToken);
     }
+
+    private void revokeAllTokenByUser(User user) {
+        List<Token> validTokens = tokenRepository.findAllAccessTokensByUser(user.getId());
+        if(validTokens.isEmpty()) {
+            return;
+        }
+
+        validTokens.forEach(t-> {
+            t.setLoggedOut(true);
+        });
+
+        tokenRepository.saveAll(validTokens);
+    }
+    private void saveUserToken(String accessToken, String refreshToken, User user) {
+        Token token = new Token();
+        token.setAccessToken(accessToken);
+        token.setRefreshToken(refreshToken);
+        token.setLoggedOut(false);
+        token.setUser(user);
+        tokenRepository.save(token);
+    }
+
 }

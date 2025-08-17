@@ -1,3 +1,22 @@
+# jwt logout
+- `youtube.com/watch?v=OpSU0VgfkL4&t`
+- OneToMany and custom sql
+  - notice in User class we have a column `@OneToMany(mappedBy = "user_obj") private List<Token> tokens;`
+  - also note the mappedBy being `user_obj` as this same name should also be the same in Token class' 
+    - `@ManyToOne @JoinColumn(name = "user_id") private User user_obj;`
+  - and in sql like `... t.user_obj.id = u.id where t.user_obj.id = :userId ...`
+- Changes follow `github.com/hello-iftekhar/springJwt` and try to 'merge' or 'incorporate' to this code base.
+  - Key files is JwtService, AuthService and SecurityConfig files
+    - these files contain the changes regarding handling tokens on logout and invalidating previous accessToken
+
+
+***
+Questions:
+- not sure what this is for in SecurityConfig: `.userDetailsService(customUserDetailsService)`
+- SecurityConfig order of dot notation matter?
+- Previous Repo errors when logging in with same credentials while this repo adds to db?
+
+***
 #  Secure your REST API with JWT: (Auth + Roles + Refresh) in Spring Security
 - `youtube.com/watch?v=clMI_jhQcR4`
 - Prerequ:
